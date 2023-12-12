@@ -4,6 +4,14 @@ from typing import List, Optional
 
 @dataclass
 class FilteringArgs:
+    tag_col: Optional[str] = field(
+        metadata={"help": "The name of the column to add the tag to"},
+    )
+    
+    tag: Optional[str] = field(
+        metadata={"help": "Tag to attach to filtered dataset"},
+    )
+
     dataset_name: str = field(
         metadata={"help": "Name of the parquet file in the raw folder"}
     )

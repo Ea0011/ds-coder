@@ -1,5 +1,4 @@
 import logging
-import time
 from preprocessing.args import FilteringArgs
 from simple_parsing import parse
 import json
@@ -7,6 +6,7 @@ import pandas as pd
 from functools import reduce
 from preprocessing.utils import get_nl_ratio
 import re
+import os
 
 
 def parse_args() -> FilteringArgs:
@@ -72,6 +72,30 @@ def load_dataset_df() -> pd.DataFrame:
     return df
 
 
+def add_tags(df: pd.DataFrame) -> pd.DataFrame:
+    df[args.tag_col] = args.tag
+    
+    return df
+
+
+def save_filtered_data(df: pd.DataFrame) -> None:
+    assert args.save_name is not None, "save file name should be set"
+    
+    df["dataset"] = args.dataset_name
+    filename, file_extension = os.path.splitext(args.save_name)
+
+    assert file_extension in [".csv", ".parquet", ".json"], "please spacify one of the compatible save formats"
+    
+    save_path = os.path.join(f"./data/filtered/{args.save_name}")
+    save_func = getattr(df, f"to_{file_extension[1:]}")
+    
+    df.reset_index(inplace=True, drop=True)
+    
+    if file_extension == ".json":
+        save_func(save_path + "l", lines=True, orient="records")
+    else:
+        save_func(save_path)
+
 if __name__ == "__main__":
     args: FilteringArgs = parse_args()
 
@@ -126,3 +150,15 @@ if __name__ == "__main__":
         f"** Filtered comment to code ratio with max ratio of {args.alpha_frac} \n \
         Remaining rows: {comment_ratio_filtered.count(axis=0)}"
     )
+    
+    if args.tag_col is not None:
+        assert args.tag is not None, "The tag should not be empty if tag_col is set"
+        comment_ratio_filtered = add_tags(comment_ratio_filtered)
+    
+        logger.info(
+            f"** Added tag {args.tag} to the column {args.tag_col} \n"
+        )
+        
+    save_filtered_data(comment_ratio_filtered)
+        
+    

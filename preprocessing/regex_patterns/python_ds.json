@@ -3,28 +3,21 @@
     "import (matplotlib|pandas|sklearn)",
     "df\\[",
     "pd\\.",
-    "library\\(dplyr|ggplot2|caret|glm\\)",
-    "glm\\(",
-    "glm\\.fit\\(",
-    "data\\.frame",
     "plt\\.plot",
     "plt\\.show",
     "plt\\.subplots",
     "from sklearn",
     "model\\.fit\\(",
-    "fig\\.show()"
+    "fig\\.show()",
+    "import torch",
+    "nn\\.Module",
+    "import tensorflow",
+    "import keras"
   ],
 
   "instruction": [
     "pandas DataFrame",
     "pandas data frame",
-    "pandas",
-    "an R program",
-    "an R script",
-    "a script in R",
-    "a function in R",
-    "an R function",
-    "an R code",
-    "R code"
+    "pandas"
   ]
 }
