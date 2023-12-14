@@ -59,8 +59,40 @@ class FilteringArgs:
         default=0.8,
         metadata={"help": "Maximum threshold for comment to code ratio."},
     )
+    
+    min_threshold_comments: Optional[float] = field(
+        default=0.01,
+        metadata={"help": "Minimum threshold for comment to code ratio."},
+    )
+
 
     output_col_name: Optional[str] = field(
         default="output",
         metadata={"help": "The name of the column to predict with the model"},
+    )
+
+
+@dataclass
+class ProcessingArgs:
+    na_strings_path: Optional[str] = field(
+        metadata={"help": "Path to a JSON array with values regarded as NA"}
+    )
+
+    dedup_columns: Optional[str] = field(
+        default="",
+        metadata={"help": "Which cols to use for deduplication"}
+    )
+    
+    replace_na: Optional[str] = field(
+        default="",
+        metadata={"help": "Value to replace NAs with"}
+    )
+    
+    save_name: Optional[str] = field(
+        default="processed",
+        metadata={"help": "Name of the saved file in processed folder"},
+    )
+    
+    log_file: Optional[str] = field(
+        default="./preprocessing.log", metadata={"help": "Path to the log file"}
     )

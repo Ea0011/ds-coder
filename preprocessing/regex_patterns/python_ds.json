@@ -1,6 +1,6 @@
 {
   "output": [
-    "import (matplotlib|pandas|sklearn)",
+    "import (matplotlib|pandas|sklearn|scipy|numpy|nltk|seaborn|xgboost|lightgbm|catboost)",
     "df\\[",
     "pd\\.",
     "plt\\.plot",

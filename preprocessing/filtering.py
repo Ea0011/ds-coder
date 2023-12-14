@@ -60,14 +60,14 @@ def filter_alphanum_ratio(df: pd.DataFrame) -> pd.DataFrame:
 
 def filter_comment_ratio(df: pd.DataFrame) -> pd.DataFrame:
     comment_ratio_filter = (
-        lambda s: get_nl_ratio(s, "python") < args.max_threshold_comments
+        lambda s: get_nl_ratio(s, "python") < args.max_threshold_comments and get_nl_ratio(s, "python") > args.min_threshold_comments
     )
 
     return df[df[args.output_col_name].apply(comment_ratio_filter)]
 
 
 def load_dataset_df() -> pd.DataFrame:
-    df = pd.read_parquet(f"./data/raw/{args.dataset_name}.parquet")
+    df = pd.read_parquet(os.path.join(f"./data/raw/{args.dataset_name}.parquet"))
 
     return df
 
@@ -144,10 +144,10 @@ if __name__ == "__main__":
         Remaining rows: {alphanum_filtered.count(axis=0)}"
     )
 
-    comment_ratio_filtered = filter_alphanum_ratio(alphanum_filtered)
+    comment_ratio_filtered = filter_comment_ratio(alphanum_filtered)
 
     logger.info(
-        f"** Filtered comment to code ratio with max ratio of {args.alpha_frac} \n \
+        f"** Filtered comment to code ratio with max ratio of {args.max_threshold_comments} \n \
         Remaining rows: {comment_ratio_filtered.count(axis=0)}"
     )
     
