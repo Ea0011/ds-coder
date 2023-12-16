@@ -45,16 +45,6 @@ class FilteringArgs:
         metadata={"help": "Minimum fraction of alphanumeric characters allowed."},
     )
 
-    min_size: Optional[int] = field(
-        default=100,
-        metadata={"help": "Minimum content size."},
-    )
-
-    max_size: Optional[int] = field(
-        default=5000,
-        metadata={"help": "Maximum content size."},
-    )
-
     min_inst_size: Optional[int] = field(
         default=5,
         metadata={"help": "Minimum instruction size in words."},

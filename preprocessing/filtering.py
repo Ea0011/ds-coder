@@ -32,13 +32,6 @@ def filter_regex_patterns(df: pd.DataFrame, regex_filters: list[str]) -> pd.Data
     return df[union_of_filters]
 
 
-def filter_long_and_short_answers(df: pd.DataFrame) -> pd.DataFrame:
-    len_filter_idx = df[args.output_col_name].apply(
-        lambda s: (len(s) <= args.max_size) and (len(s) >= args.min_size)
-    )
-    return df[len_filter_idx]
-
-
 def filter_long_and_short_instructions(df: pd.DataFrame) -> pd.DataFrame:
     len_filter_idx = df[args.input_col_name].apply(
         lambda s: (len(s.split(" ")) < args.max_inst_size)
@@ -137,11 +130,10 @@ if __name__ == "__main__":
         Remaining rows: {regex_filtered.count(axis=0)}"
     )
 
-    length_filtered = filter_long_and_short_answers(regex_filtered)
-    length_filtered = filter_long_and_short_instructions(length_filtered)
+    length_filtered = filter_long_and_short_instructions(regex_filtered)
 
     logger.info(
-        f"** Filtered with min code len {args.min_size}, max code len {args.max_size}, max inst len {args.max_inst_size}, and min inst len {args.min_inst_size} \n \
+        f"** Filtered with max inst len {args.max_inst_size}, and min inst len {args.min_inst_size} \n \
         Remaining rows: {length_filtered.count(axis=0)}"
     )
 
