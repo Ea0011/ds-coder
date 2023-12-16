@@ -23,8 +23,9 @@ def get_regex_patterns() -> list[str]:
 def filter_regex_patterns(df: pd.DataFrame, regex_filters: list[str]) -> pd.DataFrame:
     filtered_idx = []
     for col_name, regex in regex_filters.items():
-        filtered = df[col_name].str.contains("|".join(regex), regex=True)
-        filtered_idx.append(filtered)
+        if len(regex) != 0:
+            filtered = df[col_name].str.contains("|".join(regex), regex=True)
+            filtered_idx.append(filtered)
 
     union_of_filters = reduce(lambda a, b: a | b, filtered_idx)
 
@@ -33,7 +34,15 @@ def filter_regex_patterns(df: pd.DataFrame, regex_filters: list[str]) -> pd.Data
 
 def filter_long_and_short_answers(df: pd.DataFrame) -> pd.DataFrame:
     len_filter_idx = df[args.output_col_name].apply(
-        lambda s: len(s) <= args.max_size and len(s) >= args.min_size
+        lambda s: (len(s) <= args.max_size) and (len(s) >= args.min_size)
+    )
+    return df[len_filter_idx]
+
+
+def filter_long_and_short_instructions(df: pd.DataFrame) -> pd.DataFrame:
+    len_filter_idx = df[args.input_col_name].apply(
+        lambda s: (len(s.split(" ")) < args.max_inst_size)
+        and (len(s.split(" ")) > args.min_inst_size)
     )
     return df[len_filter_idx]
 
@@ -59,9 +68,9 @@ def filter_alphanum_ratio(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def filter_comment_ratio(df: pd.DataFrame) -> pd.DataFrame:
-    comment_ratio_filter = (
-        lambda s: get_nl_ratio(s, "python") < args.max_threshold_comments and get_nl_ratio(s, "python") > args.min_threshold_comments
-    )
+    comment_ratio_filter = lambda s: (
+        get_nl_ratio(s, "python") < args.max_threshold_comments
+    ) and (get_nl_ratio(s, "python") > args.min_threshold_comments)
 
     return df[df[args.output_col_name].apply(comment_ratio_filter)]
 
@@ -74,27 +83,32 @@ def load_dataset_df() -> pd.DataFrame:
 
 def add_tags(df: pd.DataFrame) -> pd.DataFrame:
     df[args.tag_col] = args.tag
-    
+
     return df
 
 
 def save_filtered_data(df: pd.DataFrame) -> None:
     assert args.save_name is not None, "save file name should be set"
-    
+
     df["dataset"] = args.dataset_name
     filename, file_extension = os.path.splitext(args.save_name)
 
-    assert file_extension in [".csv", ".parquet", ".json"], "please spacify one of the compatible save formats"
-    
+    assert file_extension in [
+        ".csv",
+        ".parquet",
+        ".json",
+    ], "please spacify one of the compatible save formats"
+
     save_path = os.path.join(f"./data/filtered/{args.save_name}")
     save_func = getattr(df, f"to_{file_extension[1:]}")
-    
+
     df.reset_index(inplace=True, drop=True)
-    
+
     if file_extension == ".json":
         save_func(save_path + "l", lines=True, orient="records")
     else:
         save_func(save_path)
+
 
 if __name__ == "__main__":
     args: FilteringArgs = parse_args()
@@ -124,9 +138,10 @@ if __name__ == "__main__":
     )
 
     length_filtered = filter_long_and_short_answers(regex_filtered)
+    length_filtered = filter_long_and_short_instructions(length_filtered)
 
     logger.info(
-        f"** Filtered with min len {args.min_size} and max len {args.max_size} \n \
+        f"** Filtered with min code len {args.min_size}, max code len {args.max_size}, max inst len {args.max_inst_size}, and min inst len {args.min_inst_size} \n \
         Remaining rows: {length_filtered.count(axis=0)}"
     )
 
@@ -150,15 +165,11 @@ if __name__ == "__main__":
         f"** Filtered comment to code ratio with max ratio of {args.max_threshold_comments} \n \
         Remaining rows: {comment_ratio_filtered.count(axis=0)}"
     )
-    
+
     if args.tag_col is not None:
         assert args.tag is not None, "The tag should not be empty if tag_col is set"
         comment_ratio_filtered = add_tags(comment_ratio_filtered)
-    
-        logger.info(
-            f"** Added tag {args.tag} to the column {args.tag_col} \n"
-        )
-        
+
+        logger.info(f"** Added tag {args.tag} to the column {args.tag_col} \n")
+
     save_filtered_data(comment_ratio_filtered)
-        
-    

@@ -7,7 +7,7 @@ class FilteringArgs:
     tag_col: Optional[str] = field(
         metadata={"help": "The name of the column to add the tag to"},
     )
-    
+
     tag: Optional[str] = field(
         metadata={"help": "Tag to attach to filtered dataset"},
     )
@@ -55,20 +55,34 @@ class FilteringArgs:
         metadata={"help": "Maximum content size."},
     )
 
+    min_inst_size: Optional[int] = field(
+        default=5,
+        metadata={"help": "Minimum instruction size in words."},
+    )
+
+    max_inst_size: Optional[int] = field(
+        default=1000,
+        metadata={"help": "Maximum instruction size in words."},
+    )
+
     max_threshold_comments: Optional[float] = field(
         default=0.8,
         metadata={"help": "Maximum threshold for comment to code ratio."},
     )
-    
+
     min_threshold_comments: Optional[float] = field(
         default=0.01,
         metadata={"help": "Minimum threshold for comment to code ratio."},
     )
 
-
     output_col_name: Optional[str] = field(
         default="output",
         metadata={"help": "The name of the column to predict with the model"},
+    )
+
+    input_col_name: Optional[str] = field(
+        default="instruction",
+        metadata={"help": "The name of the column to prompt the model with"},
     )
 
 
@@ -79,20 +93,18 @@ class ProcessingArgs:
     )
 
     dedup_columns: Optional[str] = field(
-        default="",
-        metadata={"help": "Which cols to use for deduplication"}
+        default="", metadata={"help": "Which cols to use for deduplication"}
     )
-    
+
     replace_na: Optional[str] = field(
-        default="",
-        metadata={"help": "Value to replace NAs with"}
+        default="", metadata={"help": "Value to replace NAs with"}
     )
-    
+
     save_name: Optional[str] = field(
         default="processed",
         metadata={"help": "Name of the saved file in processed folder"},
     )
-    
+
     log_file: Optional[str] = field(
         default="./preprocessing.log", metadata={"help": "Path to the log file"}
     )

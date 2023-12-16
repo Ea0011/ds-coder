@@ -15,9 +15,5 @@
     "import keras"
   ],
 
-  "instruction": [
-    "pandas DataFrame",
-    "pandas data frame",
-    "pandas"
-  ]
+  "instruction": []
 }
