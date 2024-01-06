@@ -1,3 +1,7 @@
+# Using the Data Science Coder
+
+The data science coder is provided as a quantized `GGUF` file at [HuggingFace](https://huggingface.co/ed001/datascience-coder-6.7b-GGUF). First of all, you need to  download the model. Then, you may use tools such as [Ollama](https://github.com/jmorganca/ollama) to run it. There is a `Modelfile` included in the `./models` directory that you can use as a template to run the data science coder 6.7b with Ollama.
+
 # Filtering and processing scripts for ds-coder-instruct dataset
 
 ds-coder-instruct dataset [HuggingFace](https://huggingface.co/datasets/ed001/ds-coder-instruct-v1) was constructed by filtering data science code from publically available datasets on HuggingFace. For more detaisl, please visit the HuggingFace page linked above.
