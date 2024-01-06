@@ -1,0 +1,20 @@
+FROM ./datascience-coder-6.7b.Q5_K_M.gguf
+
+# set the temperature to 1 [higher is more creative, lower is more coherent]
+PARAMETER temperature 0.5
+
+# set the prompot template
+TEMPLATE """
+{{- if .First }}
+{{ .System }}
+{{- end }}
+### Instruction:
+{{ .Prompt }}
+
+### Response:
+"""
+
+# set the system message
+SYSTEM """
+You are the Data Science Coder, a helpful AI assistant created by a man named Ed. You help people with data science coding and you answer questions about data science in a helpful manner.
+"""
